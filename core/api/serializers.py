@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
+from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, HistoricoCidade, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
 
 
 class NumCasosObitosCidadeSerializer(ModelSerializer):
@@ -59,3 +59,9 @@ class LeitosSerializer(ModelSerializer):
                   'capacidade_UTI', 'internados_UTI', 'capacidade_leitos_estabilizacao',
                   'internados_leitos_estabilizacao', 'capacidade_leitos_respiradores', 
                   'internados_leitos_respiradores', 'altas']
+        
+        
+class HistoricoCidadeSerializer(ModelSerializer):
+    class Meta:
+        model = HistoricoCidade
+        fields = ['data', 'municipio', 'confirmados', 'obitos', 'cep', 'ibge_id']

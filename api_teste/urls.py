@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from core.api.viewsets import NumCasosObitosCidadeViewSet, TestesRapidosViewSet, MorbidadesViewSet
-from core.api.viewsets import CasosPorDiaViewSet, CasosPorSemanaViewSet, ConfirmadosSexoViewSet, FaixaEtariaViewSet, LeitosViewSet, ObitosSexoViewSet
+from core.api.viewsets import CasosPorDiaViewSet, CasosPorSemanaViewSet, ConfirmadosSexoViewSet, FaixaEtariaViewSet, HistoricoCidadeViewSet, LeitosViewSet, ObitosSexoViewSet
 
 router = routers.DefaultRouter()
 router.register(r'total-obitos-e-casos', NumCasosObitosCidadeViewSet)
@@ -29,6 +29,7 @@ router.register(r'morbidades', MorbidadesViewSet)
 router.register(r'casos-por-dia', CasosPorDiaViewSet)
 router.register(r'casos-por-semanas', CasosPorSemanaViewSet)
 router.register(r'leitos', LeitosViewSet)
+router.register(r'historico-cidades', HistoricoCidadeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

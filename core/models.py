@@ -99,3 +99,23 @@ class Leitos(models.Model):
     
     def __str__(self):
         return self.dia.isoformat()
+
+
+class HistoricoCidade(models.Model):
+    """Model definition for HistoricoCidade."""
+
+    municipio = models.CharField(verbose_name='Nome', max_length=100)
+    data = models.DateField(verbose_name='Data')
+    confirmados = models.IntegerField(verbose_name='Confirmados')
+    obitos = models.IntegerField(verbose_name='Óbitos')
+    cep = models.IntegerField(verbose_name='CEP')
+    ibge_id = models.IntegerField(verbose_name='IBGE ID')
+
+    class Meta:
+        """Meta definition for HistoricoCidade."""
+
+        verbose_name = 'HistoricoCidade'
+        verbose_name_plural = 'HistoricoCidades'
+
+    def __str__(self):
+        return self.municipio 

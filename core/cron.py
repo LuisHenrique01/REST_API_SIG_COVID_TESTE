@@ -1,8 +1,11 @@
 from urllib import request
 import csv
-from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
+from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, HistoricoCidade, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
 from datetime import date
 import re 
+from unicodedata import normalize
+import difflib
+from core.cidades import cidades
 
 '''
 Faz o scrap dos dados da planilia
@@ -17,6 +20,7 @@ def scrap_dados():
     atualiza_morbidades(data_atualizacao)
     atualiza_casos_por_dia(data_atualizacao)
     atualiza_leitos(data_atualizacao)
+    atualiza_historico(data_atualizacao)
     
     
 def atualiza_casos_obitos(data_atualizacao):
@@ -161,6 +165,26 @@ def atualiza_leitos(data_atualizacao):
                                    capacidade_leitos_respiradores=linha['Capacidade Leitos Respiradores'],
                                    internados_leitos_respiradores=linha['Internados Leitos Respiradores']))
     Leitos.objects.bulk_create(bulk)
+    
+    
+def atualiza_historico(data_atualizacao):
+    ultimo_registro_dia = HistoricoCidade.objects.last()
+    nomeTabela, tabela = get_dict_dados(id_='1655251943')
+    bulk = []
+    for linha in (tabela):
+        dia, mes, ano = tuple(map(int, linha['DATA (Balanço do dia)'].split('/')))
+        data = date(ano, mes, dia)
+        if  ultimo_registro_dia is None or ultimo_registro_dia.dia < data:
+            for nome, cidade in zip(cidades.keys(), cidades.values()):
+                        if compara_cidades(nome, linha['MUNICÍPIO']):
+                            obitos = linha['TOTAL DE ÓBITOS'] if linha['TOTAL DE ÓBITOS'] != '' else 0
+                            bulk.append(HistoricoCidade(municipio=linha['MUNICÍPIO'],
+                                                        data=data,
+                                                        confirmados=linha['CASOS CONFIRMADOS'],
+                                                        obitos=obitos,
+                                                        ibge_id=cidade['codigo_ibge'],
+                                                        cep=cidade['cep']))
+    HistoricoCidade.objects.bulk_create(bulk)
 
 
 def get_dict_dados(id_, url='https://docs.google.com/spreadsheets/d/1b-GkDhhxJIwWcA6tk3z4eX58f-f1w2TA2f2XrI4XB1w/export?format=csv&gid='):
@@ -187,3 +211,17 @@ def get_data_atualizacao():
 
     data_atualizacao = date.fromisoformat(isoFormattedDate)
     return data_atualizacao
+
+
+def padronizar_cidade(txt):
+    return normalize('NFKD', txt).encode('ASCII', 'ignore').decode('ASCII').lower()
+
+
+def compara_cidades(*args):
+    cidade1, cidade2 = map(padronizar_cidade, args)
+
+    min_percent_equal = 95
+    diff = difflib.SequenceMatcher(None, cidade1, cidade2)
+    percent_equal = round(diff.ratio(), 5) * 100
+
+    return percent_equal >= min_percent_equal

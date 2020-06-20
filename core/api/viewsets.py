@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
+from core.models import CasosPorDia, CasosPorSemana, ConfirmadosSexo, FaixaEtaria, HistoricoCidade, Leitos, Morbidades, ObitosSexo, TestesRapidos, numCasosObitosCidade
 from core.api.serializers import NumCasosObitosCidadeSerializer, TestesRapidosSerializer, CasosPorSemanaSerializer
-from core.api.serializers import CasosPorDiaSerializer, ConfirmadosSexoSerializer, FaixaEtariaSerializer, LeitosSerializer, MorbidadesSerializer, ObitosSexoSerializer
+from core.api.serializers import CasosPorDiaSerializer, ConfirmadosSexoSerializer, FaixaEtariaSerializer, HistoricoCidadeSerializer, LeitosSerializer, MorbidadesSerializer, ObitosSexoSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 
@@ -69,3 +69,11 @@ class LeitosViewSet(ModelViewSet):
     serializer_class = LeitosSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['dia']     
+    
+    
+class HistoricoCidadeViewSet(ModelViewSet):
+    queryset = HistoricoCidade.objects.all()
+    serializer_class = HistoricoCidadeSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['data', 'cep', 'ibge_id']
+    search_fields = ['municipio']     
