@@ -82,7 +82,7 @@ class CasosPorSemana(models.Model):
     novos = models.IntegerField(verbose_name='Novos casos por semana')
     
     def __str__(self):
-        return self.dia.isoformat()
+        return str(self.semana)
     
     
 class Leitos(models.Model):

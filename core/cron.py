@@ -126,11 +126,18 @@ def atualiza_casos_por_dia(data_atualizacao):
                                     novosCasosPorDia=linha['Novos por Dia'],
                                     novosObitosPorDia=novosObitos))
         semana = linha['Semana']
-        if (semana != '') and (ultimo_registro_semana is None or ultimo_registro_semana.semana < int(semana)):
-            bulk_semana.append(CasosPorSemana(semana=semana, 
+        regex = re.compile(r'\d+')
+        semana = regex.findall(semana)
+        if (len(semana) > 0) and (ultimo_registro_semana is None or ultimo_registro_semana.semana < int(semana[0])):
+            bulk_semana.append(CasosPorSemana(semana=int(semana[0]), 
                                                 confirmados=linha['Conf/Semana'],
                                                 obitos=linha['Obt/Semana'],
                                                 novos=linha['Novos/Semana']))
+        if (len(semana) > 0) and (ultimo_registro_semana.semana == int(semana[0])):
+            ultimo_registro_semana.confirmados = linha['Conf/Semana']
+            ultimo_registro_semana.obitos = linha['Obt/Semana']
+            ultimo_registro_semana.novos = linha['Novos/Semana']
+            ultimo_registro_semana.save()
     CasosPorDia.objects.bulk_create(bulk_dia)
     CasosPorSemana.objects.bulk_create(bulk_semana)
 
@@ -172,9 +179,9 @@ def atualiza_historico(data_atualizacao):
     nomeTabela, tabela = get_dict_dados(id_='1655251943')
     bulk = []
     for linha in (tabela):
-        dia, mes, ano = tuple(map(int, linha['DATA (Balanço do dia)'].split('/')))
+        dia, mes, ano = tuple(map(int, linha[' '].split('/')))
         data = date(ano, mes, dia)
-        if  ultimo_registro_dia is None or ultimo_registro_dia.dia < data:
+        if  ultimo_registro_dia is None or ultimo_registro_dia.data < data:
             for nome, cidade in zip(cidades.keys(), cidades.values()):
                         if compara_cidades(nome, linha['MUNICÍPIO']):
                             obitos = linha['TOTAL DE ÓBITOS'] if linha['TOTAL DE ÓBITOS'] != '' else 0
