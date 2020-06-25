@@ -1,33 +1,59 @@
 # REST_API_SIG_COVID_TESTE
 Testes realizados para a REST API do SIG COVID
 
-# 1 - Instalação: 
-* git clone https://github.com/LuisHenrique01/REST_API_SIG_COVID_TESTE.git
+# 1 - Instalação:
 
-* python -m venv venv (Python >= 3.7)
+* Baixando a API
 
-* source venv/bin/activate 
+```bash
+git clone https://github.com/LuisHenrique01/REST_API_SIG_COVID_TESTE.git
+```
+* Criando o ambiente virtual    
+   * Observação: Python >= 3.7
 
-* pip install -r requirements.txt
+```bash
+python -m venv venv
+```
+
+```bash
+ source venv/bin/activate 
+```
 
 # 2 - Configurando
+* Instalando dependências
+```bash
+ pip install -r requirements.txt
+```
 
-* python manage.py makemigrations
+* Configurando o banco de dados (SQLite, para ultilizar o Postgres faça as devidas conecções e execute os comandos abaixo)
 
-* python manage.py migrate
+```bash
+ python manage.py makemigrations
+```
+```bash
+ python manage.py migrate
+```
+# 3 - Buscando dados na SESAPI
 
-* python manage.py shell
+* Entrando no shell do Django 
 
-* Estraindo os dados e salvando em banco
-  * from core.cron import scrap_dados
-  * scrap_dados()
-  * exit()
+```bash
+ python manage.py shell
+```
+* Estraindo os dados e salvando no banco
+```python
+from core.cron import scrap_dados
+scrap_dados()
+exit()
+```
 
-# 3 - Iniciando
+# 4 - Iniciando
 
-* python manage.py runserver
+```bash
+ python manage.py runserver
+```
 
-# 4 - Modo de usar
+# 5 - Modo de usar
 
 * Entrar no link [API TESTE](http://127.0.0.1:8000/).
 
@@ -46,6 +72,7 @@ Testes realizados para a REST API do SIG COVID
 * Para obter os dados é só entrar no link pelo navegador ou fazer um GET diretamente da sua aplicação em qualquer linguagem. 
 
 * Para ultilizar os filtros é so acrescentar um "?" após a URL.
-   * Exemplo: http://127.0.0.1:8000/total-obitos-e-casos/?cep=64748000
-   * Mais de um campo: http://127.0.0.1:8000/total-obitos-e-casos/?cep=64748000&data_coleta=2020-06-15
-   * Para nomes de cidades: http://127.0.0.1:8000/total-obitos-e-casos/?search=Arraial
+   * Exemplos: 
+      * Simples: http://127.0.0.1:8000/total-obitos-e-casos/?cep=64748000
+      * Mais de um campo: http://127.0.0.1:8000/total-obitos-e-casos/?cep=64748000&data_coleta=2020-06-15
+      * Para nomes de cidades: http://127.0.0.1:8000/total-obitos-e-casos/?search=Arraial
